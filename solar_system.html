@@ -1,0 +1,179 @@
+<html> 
+    <head> 
+        <style>
+            body {
+            margin:0;
+            overflow: hidden;
+            }
+        </style>
+    </head> 
+    <body>
+    <script type = "module">
+        // function shaderCube(){
+        //     var geometry = new THREE.BoxGeometry(2, 1, 1);
+        //     var material = new THREE.ShaderMaterial({
+        //         fragmentShader: fragmentShader(),
+        //         vertexShader: vertexShader(),
+        //     });
+        //     mesh = new THREE.Mesh(geometry, material);
+        //     scene.add(mesh);
+        // }
+        function animate(){
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+            // mesh.rotation.x += 0.011;
+            // mesh.rotation.y += 0.013;
+            time = 0.0001 * performance.now();
+            t = (time % 1)
+            point = curve1.getPoint(t)
+            earthSystem.position.x = point.x
+            earthSystem.position.z = point.y
+
+            moonMesh.position.x = orbitRadius * Math.cos(time * speed)
+            moonMesh.position.z = orbitRadius * Math.sin(time * speed)
+
+        }
+        function init(){
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000 );
+            // camera.position.x = 0;
+            // camera.position.y = 30;
+            // camera.position.z = 500;
+            camera.position.set(0, 30, 500);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(0x000000, 1.0);
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.autoRotate = true;
+        }
+        
+        import * as THREE from "https://web.cs.manchester.ac.uk/three/three.js-master/build/three.module.js";
+// Your Javascript will go here.
+        import { OrbitControls } from
+                "https://web.cs.manchester.ac.uk/three/three.js-master/examples/jsm/controls/OrbitControls.js";
+        const loader = new THREE.TextureLoader();
+        var texture;
+        var controls;
+        var renderer;
+        var scene;
+        var camera;
+        var time;
+        var t;
+        var point;
+        var curve1;
+        var mesh;
+        var earthSystem;
+        var sunMesh;
+        var moonMesh;
+        var earthMesh;
+        var earthGeometry;
+        var earthMaterial;
+        var sunGeometry;
+        var sunMaterial;
+        var moonGeometry;
+        var moonMaterial;
+        var orbitRadius = 80;
+        var speed = 20;
+        var light;
+        var AmbientLight;
+        // const scene = new THREE.Scene();
+        // const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000 );
+        // camera.position.x = 0;
+        // camera.position.y = 30;
+        // camera.position.z = 500;
+        // camera.position.set = (0, 30, 500);
+        // camera.far = 10000;
+        curve1 = new THREE.EllipseCurve(
+            0, 0,
+            200, 200,
+            0, 2*Math.PI
+        );
+        // var geometry1 = new THREE.BufferGeometry();
+        // var material1 = new THREE.LineBasicMaterial(0xffffff);
+        // var line =
+
+
+        function creat_sun(){
+            sunGeometry = new THREE.SphereGeometry(109, 400, 200);
+            texture = loader.load("sun.jpeg")
+            sunMaterial = new THREE.MeshStandardMaterial(
+                {
+                emissive: 0xffd700,
+                emissiveMap: texture,
+                emissiveIntensity: 1,
+                wireframe: false
+        }
+        );
+            sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+
+            scene.add(sunMesh);
+            light = new THREE.PointLight(0xffffff, 1, 1000)
+            light.position.set(0, 0, 0);
+            scene.add( light );
+            AmbientLight = new THREE.PointLight(0xffffff, 1, 1000);
+            AmbientLight.position.set(109,400,200);
+            scene.add(AmbientLight);
+
+        }
+
+        function creat_moon(){
+            moonGeometry = new THREE.SphereGeometry( 5, 40, 20);
+            texture = loader.load("moon.jpeg")
+            moonMaterial = new THREE.MeshPhongMaterial(
+                {
+                    map: texture
+                    // color: 0xffffff
+                }
+            );
+            moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
+            // const light = new Three.PointLight(0xff0000, 1, 100)
+            // light.position.set(109, 400, 200);
+            // scene.add( light );
+        }
+
+        function creat_earth(){
+            earthGeometry = new THREE.SphereGeometry(25, 50, 50);
+            texture = loader.load("earth.jpeg")
+            earthMaterial = new THREE.MeshPhongMaterial(
+                {
+                    map: texture,
+                    // color: 0x87CEFA
+                }
+                )
+            earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+
+            earthSystem = new THREE.Group();
+            earthSystem.add(earthMesh);
+            earthSystem.add(moonMesh);
+            earthMesh.position.set(0, 0, 0);
+            moonMesh.position.set(50, 0, 0);
+
+            // earth.position.x = earthOrbitRadius * sin(2*3.14*w*t);
+            // earth.position.y = earthOrbitRadius * cos(2*3.14*w*t);
+
+            scene.add(earthSystem);
+            // const light = new Three.PointLight(0xff0000, 1, 100)
+            // light.position.set(109, 400, 200);
+            // scene.add( light );
+        }
+        init();
+
+        // shaderCube();
+        creat_sun();
+        creat_moon();
+        creat_earth();
+
+        animate();
+
+
+
+
+
+
+        
+        
+        
+    </script>
+    </body> 
+</html>
